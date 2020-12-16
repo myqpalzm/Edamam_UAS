@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="main.css">
+    <title>ANGULARJS III</title>
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-resource.js"></script>
+    <script src="users.json"></script>
+</head>
+
+<body ng-app="myApp">
+   <div class="jumbotron text-center">
+       <h1>Food API </h1>
+   </div>
+   <form ng-submit="search()" ng-controller="myCtrl">
+      <div class="container form-group">
+        <input class="form-control" type="text" ng-model="uid">
+        <input type="submit" id="submit" value="Submit">
+      </div>
+       <div class="panel panel-primary container" ng-model="users">
+          <div class="panel-heading"><h1>Post of {{user.text}}</h1></div>
+          <ul class="list-group" ng-repeat="users in posts track by $index">
+            <li class="list-group-item">
+                <h2>{{users.label}}</h2>
+<!--               <h4>{{users.title}}</h4>-->
+            </li>
+          </ul>
+        </div>
+    </form>
+
+   <script>
+       var app = angular.module("myApp",['ngResource']);
+       app.factory('UserRF',function($resource){
+            return $resource('https://api.edamam.com/api/food-database/v2/parser?nutrition-type=logging&ingr&app_id=17ea4ef4&app_key=60d9c0b94f107dad0e551fc9769ec41d/&ingr?text=:user',{user: '@user'});
+        });
+        app.factory('PostRF',function($resource){
+            return $resource('https://api.edamam.com/api/food-database/v2/parser?nutrition-type=logging&ingr&app_id=17ea4ef4&app_key=60d9c0b94f107dad0e551fc9769ec41d/&ingr?text=:user',{user: '@user'});
+        });
+       app.controller("myCtrl", function($scope, UserRF,PostRF){
+           $scope.search = function(){
+               var text = $scope.uid;
+               var label= $scope.uid;
+               $scope.user = UserRF.get({user:text});
+               $scope.posts = PostRF.query({user:text});
+           };
+       });
+   </script>
+</body>
+</html>
